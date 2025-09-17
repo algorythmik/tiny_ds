@@ -22,3 +22,22 @@ TEST(MatrixTest, Transpose) {
     for (auto j = 0; j < 2; ++j)
       EXPECT_EQ(res(i, j), ex(i, j));
 }
+
+TEST(MatrixTest, Inverse) {
+  Matrix<double> m = {{1, 0}, {0, 1}};
+  auto res = m.inverse();
+  for (auto i = 0; i < 2; ++i)
+    for (auto j = 0; j < 2; ++j)
+      EXPECT_EQ(res(i, j), m(i, j));
+}
+
+TEST(MatrixTest, Equality) {
+  Matrix<double> a = {{1, 0}, {0, 1}};
+  Matrix<double> b = {{1, 0}, {0, 1}};
+  EXPECT_EQ(a == b, true);
+
+  Matrix<double> c = {{1, 0}, {1, 1}};
+  EXPECT_EQ(a == c, false);
+  Matrix<double> d = {{1}, {2}};
+  EXPECT_EQ(a == d, false);
+}
