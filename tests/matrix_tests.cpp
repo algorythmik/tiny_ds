@@ -47,3 +47,10 @@ TEST(MatrixTest, Inverse) {
   EXPECT_EQ(a.inverse(), b);
   EXPECT_EQ(b.inverse(), a);
 }
+
+TEST(MatrixTest, Multiply) {
+  Matrix<double> identity = {{1, 0}, {0, 1}};
+  Matrix<double> a = {{-1, 3.0 / 2}, {1, -1}};
+  Matrix<double> b = {{2, 3}, {2, 2}};
+  EXPECT_EQ(a * b, identity);
+}
