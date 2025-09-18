@@ -47,7 +47,7 @@ public:
 
     Matrix res = Matrix(rows_, cols_);
     for (auto i = 0; i < rows_; ++i)
-      for (auto j = 0; j > cols_; ++j)
+      for (auto j = 0; j < cols_; ++j)
         res(i, j) = (*this)(i, j) + other(i, j);
     return res;
   }

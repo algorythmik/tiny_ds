@@ -42,4 +42,8 @@ TEST(MatrixTest, Inverse) {
   Matrix<double> m = {{1, 0}, {0, 1}};
   auto res = m.inverse();
   EXPECT_EQ(m, res);
+  Matrix<double> a = {{-1, 3.0 / 2}, {1, -1}};
+  Matrix<double> b = {{2, 3}, {2, 2}};
+  EXPECT_EQ(a.inverse(), b);
+  EXPECT_EQ(b.inverse(), a);
 }
