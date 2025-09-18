@@ -2,7 +2,7 @@ name: CI
 # Run on main and PRs to main
 on:
   push:
-    branches: [main]
+    branches: [*]
   pull_requests:
     branches: [main]
 
