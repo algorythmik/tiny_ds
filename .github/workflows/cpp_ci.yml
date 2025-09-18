@@ -10,21 +10,21 @@ jobs:
   buil-and-test:
     runs-on: ubuntu-latest
 
-  steps:
+    steps:
     # 1. Check out the code in the runner
-    - name: Checkout repo
-      uses: actions/checkout@v4
-    # 2. Install CMake
-    - name: Install Cmake
-      uses: lukka/get-cmake@latest
-    # 3. Configure your project (generate the build system in 'build' dir)
-    - name: Configure CMake
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      # 2. Install C Make
+      - name: Install Cmake
+        uses: lukka/get-cmake@latest
+      # 3. Configure your project (generate the build system in 'build' dir)
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-    # 4. Build your targets
-    - name: Build
-      run: cmake --build build --config Release -- -j$(nproc)
+      # 4. Build your targets
+      - name: Build
+        run: cmake --build build --config Release -- -j$(nproc)
 
-    # 5. Run your tests with ctest
-    - name: Run tests
-      run: ctest --test-dir build --output-on-failure
+      # 5. Run your tests with ctest
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
