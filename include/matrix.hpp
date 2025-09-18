@@ -47,7 +47,7 @@ public:
 
     Matrix res = Matrix(rows_, cols_);
     for (auto i = 0; i < rows_; ++i)
-      for (auto j = 0; j > cols_; ++j)
+      for (auto j = 0; j < cols_; ++j)
         res(i, j) = (*this)(i, j) + other(i, j);
     return res;
   }
@@ -66,6 +66,17 @@ public:
     }
     return res;
   }
+  bool operator==(const Matrix &other) const {
+    if ((rows_ != other.rows_) || (cols_ != other.cols_))
+      return false;
+    for (size_t i = 0; i < rows_; ++i)
+      for (size_t j = 0; j < cols_; ++j) {
+        if ((*this)(i, j) != other(i, j))
+          return false;
+      }
+    return true;
+  }
+
   Matrix inverse() const {
     if (rows_ != cols_)
       throw std::runtime_error("Matrix must be square to invert");
