@@ -79,60 +79,26 @@ public:
 
   template <typename U>
   Matrix<matrix_value_t<T, U>> operator+(const Matrix<U> &other) {
-    if (rows_ == other.rows_) {
-      if (cols_ == other.cols_) {
-        Matrix<matrix_value_t<T, U>> res = Matrix(rows_, cols_);
-        for (auto i = 0; i < rows_; ++i)
-          for (auto j = 0; j < cols_; ++j)
-            res(i, j) = (*this)(i, j) + other(i, j);
-        return res;
-      } else if (cols_ == 1) {
-        Matrix<matrix_value_t<T, U>> res = Matrix(rows_, other.cols_);
-        for (auto i = 0; i < rows_; ++i)
-          for (auto j = 0; j < other.cols_; ++j)
-            res(i, j) = (*this)(i, 0) + other(i, j);
-        return res;
-      } else if (other.cols_ == 1) {
-        // rows_ = other.rows_ > 1
-        Matrix<matrix_value_t<T, U>> res = Matrix(rows_, cols_);
-        for (auto i = 0; i < rows_; i++)
-          for (auto j = 0; j < cols_; ++j)
-            res(i, j) = (*this)(i, j) + other(i, 0);
-        return res;
+    const size_t res_rows = std::max(rows_, other.rows());
+    const size_t res_cols = std::max(cols_, other.cols());
+
+    auto dim_pass = [](size_t a, size_t b) {
+      return a == b || a == 1 || b == 1;
+    };
+
+    if (!dim_pass(rows_, other.rows()) || !dim_pass(cols_, other.cols())) {
+      throw std::runtime_error(
+          "Dimension mismatch or broadcasting not possible");
+    }
+
+    Matrix<matrix_value_t<T, U>> res = Matrix(res_rows, res_cols);
+    for (size_t i = 0; i < res.rows_; ++i)
+      for (size_t j = 0; j < res.cols_; ++j) {
+        res(i, j) = (*this)(i % rows_, j % cols_) +
+                    other(i % other.rows(), j % other.cols());
       }
-    }
-    if (cols_ == other.cols_) {
-      if (rows_ == 1) {
-        Matrix<matrix_value_t<T, U>> res = Matrix(other.rows_, cols_);
-        for (auto i = 0; i < other.rows_; ++i)
-          for (auto j = 0; j < cols_; ++j) {
-            res(i, j) = (*this)(0, j) + other(i, j);
-          }
-        return res;
-      } else if (other.rows_ == 1) {
-        // rows_ = other.rows_ > 1
-        Matrix<matrix_value_t<T, U>> res = Matrix(rows_, cols_);
-        for (auto i = 0; i < rows_; i++)
-          for (auto j = 0; j < cols_; ++j)
-            res(i, j) = (*this)(i, j) + other(0, j);
-        return res;
-      }
-    }
-    if ((rows_ == 1) && (cols_ == 1)) {
-      Matrix<matrix_value_t<T, U>> res = Matrix(other.rows_, other.cols_);
-      for (auto i = 0; i < other.rows_; ++i)
-        for (auto j = 0; j < other.cols_; ++j)
-          res(i, j) = (*this)(0, 0) + other(i, j);
-      return res;
-    }
-    if ((other.rows_ == 1) && (other.cols_ == 1)) {
-      Matrix<matrix_value_t<T, U>> res = Matrix(rows_, cols_);
-      for (auto i = 0; i < rows_; ++i)
-        for (auto j = 0; j < cols_; ++j)
-          res(i, j) = (*this)(i, j) + other(0, 0);
-      return res;
-    }
-    throw std::runtime_error("Dimension mismatch or broadcasting not possible");
+
+    return res;
   }
 
   template <typename U>

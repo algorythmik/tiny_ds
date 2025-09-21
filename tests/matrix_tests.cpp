@@ -33,7 +33,7 @@ TEST(MatrixTest, Addition) {
 }
 TEST(MatrixTest, AdditionBroadcast) {
   Matrix<double> a = {{1, 1}};
-  Matrix<double> b = {{1, 0}, {0, 1}};
+  Matrix<int> b = {{1, 0}, {0, 1}};
   Matrix<double> res = {{2, 1}, {1, 2}};
   EXPECT_EQ(a + b, res);
   a = {{1}, {1}};
