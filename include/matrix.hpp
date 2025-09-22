@@ -56,10 +56,6 @@ public:
         res(j, i) = (*this)(i, j);
     return res;
   }
-  // TODO: add broadcasting when other is (row, 1) or (1, col)
-  // TODO: add broadcasing when other is (1, 1)
-  // add broadcasting when other is scalaer
-  // reshape does not mutate the object but return a new one
   Matrix reshape(size_t new_row, size_t new_col) {
     if (new_row * new_col != rows_ * cols_)
       throw std::runtime_error("The shape doesn't match");
@@ -95,8 +91,8 @@ public:
     auto get_elem = [](const auto &m, size_t i, size_t j) -> const auto & {
       return m(i % m.rows(), j % m.cols());
     };
-    for (size_t i = 0; i < res.rows_; ++i)
-      for (size_t j = 0; j < res.cols_; ++j) {
+    for (size_t i = 0; i < res.rows(); ++i)
+      for (size_t j = 0; j < res.cols(); ++j) {
         res(i, j) = get_elem((*this), i, j) + get_elem(other, i, j);
       }
 
@@ -118,8 +114,8 @@ public:
     }
 
     Matrix<matrix_value_t<T, U>> res = Matrix(res_rows, res_cols);
-    for (size_t i = 0; i < res.rows_; ++i)
-      for (size_t j = 0; j < res.cols_; ++j) {
+    for (size_t i = 0; i < res.rows(); ++i)
+      for (size_t j = 0; j < res.cols(); ++j) {
         res(i, j) = (*this)(i % rows_, j % cols_) *
                     other(i % other.rows(), j % other.cols());
       }

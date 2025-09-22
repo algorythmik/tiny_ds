@@ -49,6 +49,25 @@ TEST(MatrixTest, AdditionBroadcast) {
   res = {{2, 1}, {1, 2}};
   EXPECT_EQ(a + b, res);
 }
+TEST(MatrixTest, ElementwiseMult) {
+  Matrix<double> a = {{2, 3}};
+  Matrix<int> b = {{1, 1}, {1, 2}};
+  Matrix<double> res = {{2, 3}, {2, 6}};
+  EXPECT_EQ(a * b, res);
+  a = {{2}, {3}};
+  b = {{1, 1}, {1, 2}};
+  res = {{2, 2}, {3, 6}};
+  EXPECT_EQ(a * b, res);
+  EXPECT_EQ(b * a, res);
+  std::cout << "here" << std::endl;
+  a = {{2}};
+  b = {{1, 2}, {3, 4}};
+  res = {{2, 4}, {6, 8}};
+  EXPECT_EQ(a * b, res);
+  a = {{1, 2}, {3, 4}};
+  res = {{1, 4}, {9, 16}};
+  EXPECT_EQ(a * a, res);
+}
 TEST(MatrixTest, Transpose) {
   Matrix<double> m = {{1, 2}, {3, 4}};
   auto res = m.transpose();
