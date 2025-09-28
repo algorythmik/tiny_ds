@@ -112,16 +112,19 @@ public:
       throw std::runtime_error(
           "Dimension mismatch or broadcasting not possible");
     }
+    auto get_elem = [](const auto &m, size_t i, size_t j) -> const auto & {
+      return m(i % m.rows(), j % m.cols());
+    };
 
     Matrix<matrix_value_t<T, U>> res = Matrix(res_rows, res_cols);
     for (size_t i = 0; i < res.rows(); ++i)
       for (size_t j = 0; j < res.cols(); ++j) {
-        res(i, j) = (*this)(i % rows_, j % cols_) *
-                    other(i % other.rows(), j % other.cols());
+        res(i, j) = get_elem((*this), i, j) + get_elem(other, i, j);
       }
 
     return res;
   }
+
   template <typename U>
   Matrix<matrix_value_t<T, U>> matmul(const Matrix<U> &other) const {
     if (cols_ != other.rows())
