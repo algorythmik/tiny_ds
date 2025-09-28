@@ -73,8 +73,9 @@ public:
     return (*this);
   }
 
-  template <typename U>
-  Matrix<matrix_value_t<T, U>> operator+(const Matrix<U> &other) {
+  template <typename U, typename F>
+  Matrix<matrix_value_t<T, U>> elementwise(const Matrix<U> &other, F op) {
+
     const size_t res_rows = std::max(rows_, other.rows());
     const size_t res_cols = std::max(cols_, other.cols());
 
@@ -93,36 +94,21 @@ public:
     };
     for (size_t i = 0; i < res.rows(); ++i)
       for (size_t j = 0; j < res.cols(); ++j) {
-        res(i, j) = get_elem((*this), i, j) + get_elem(other, i, j);
+        res(i, j) = static_cast<matrix_value_t<T, U>>(
+            op(get_elem((*this), i, j), get_elem(other, i, j)));
       }
 
     return res;
   }
 
   template <typename U>
+  Matrix<matrix_value_t<T, U>> operator+(const Matrix<U> &other) {
+    return elementwise(other, [](auto a, auto b) { return a + b; });
+  }
+
+  template <typename U>
   Matrix<matrix_value_t<T, U>> operator*(const Matrix<U> &other) {
-    const size_t res_rows = std::max(rows_, other.rows());
-    const size_t res_cols = std::max(cols_, other.cols());
-
-    auto dim_pass = [](size_t a, size_t b) {
-      return a == b || a == 1 || b == 1;
-    };
-
-    if (!dim_pass(rows_, other.rows()) || !dim_pass(cols_, other.cols())) {
-      throw std::runtime_error(
-          "Dimension mismatch or broadcasting not possible");
-    }
-    auto get_elem = [](const auto &m, size_t i, size_t j) -> const auto & {
-      return m(i % m.rows(), j % m.cols());
-    };
-
-    Matrix<matrix_value_t<T, U>> res = Matrix(res_rows, res_cols);
-    for (size_t i = 0; i < res.rows(); ++i)
-      for (size_t j = 0; j < res.cols(); ++j) {
-        res(i, j) = get_elem((*this), i, j) + get_elem(other, i, j);
-      }
-
-    return res;
+    return elementwise(other, [](auto a, auto b) { return a * b; });
   }
 
   template <typename U>
