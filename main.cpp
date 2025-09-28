@@ -1,6 +1,6 @@
-#include "include/matrix.hpp"
 #include "include/csv_loader.hpp"
 #include "include/linear_regression.hpp"
+#include "include/matrix.hpp"
 #include <iostream>
 int main() {
   Matrix<double> A(3, 3, 5);
@@ -10,15 +10,15 @@ int main() {
   T.print();
   std::cout << "After transposing" << std::endl;
   A.transpose().print();
-  Matrix<int> C = {{1, 0}, {0, 1}};
+  Matrix<double> C = {{1, 0}, {0, 1}};
   Matrix<int> D = {{1, 2}, {3, 4}};
-  Matrix<int> res = C * D;
+  Matrix<double> res = C.matmul(D);
   res.print();
   Matrix<double> mat = load_csv("./data/test.csv", false);
   std::cout << "Reading from the file" << std::endl;
   mat.print();
   std::cout << "Testing inversion" << std::endl;
-  Matrix<int> C_inv = C.inverse();
+  Matrix<double> C_inv = C.inverse();
   C_inv.print();
   std::cout << "Testing a new matrix of int" << std::endl;
   Matrix<int> X(2, 2);

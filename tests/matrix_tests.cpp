@@ -31,6 +31,43 @@ TEST(MatrixTest, Addition) {
   Matrix<double> res = {{2, 0}, {0, 2}};
   EXPECT_EQ(a + b, res);
 }
+TEST(MatrixTest, AdditionBroadcast) {
+  Matrix<double> a = {{1, 1}};
+  Matrix<int> b = {{1, 0}, {0, 1}};
+  Matrix<double> res = {{2, 1}, {1, 2}};
+  EXPECT_EQ(a + b, res);
+  a = {{1}, {1}};
+  b = {{1, 0}, {0, 1}};
+  res = {{2, 1}, {1, 2}};
+  EXPECT_EQ(a + b, res);
+  b = {{1}, {1}};
+  a = {{1, 0}, {0, 1}};
+  res = {{2, 1}, {1, 2}};
+  EXPECT_EQ(a + b, res);
+  a = {{1}};
+  b = {{1, 0}, {0, 1}};
+  res = {{2, 1}, {1, 2}};
+  EXPECT_EQ(a + b, res);
+}
+TEST(MatrixTest, ElementwiseMult) {
+  Matrix<double> a = {{2, 3}};
+  Matrix<int> b = {{1, 1}, {1, 2}};
+  Matrix<double> res = {{2, 3}, {2, 6}};
+  EXPECT_EQ(a * b, res);
+  a = {{2}, {3}};
+  b = {{1, 1}, {1, 2}};
+  res = {{2, 2}, {3, 6}};
+  EXPECT_EQ(a * b, res);
+  EXPECT_EQ(b * a, res);
+  std::cout << "here" << std::endl;
+  a = {{2}};
+  b = {{1, 2}, {3, 4}};
+  res = {{2, 4}, {6, 8}};
+  EXPECT_EQ(a * b, res);
+  a = {{1, 2}, {3, 4}};
+  res = {{1, 4}, {9, 16}};
+  EXPECT_EQ(a * a, res);
+}
 TEST(MatrixTest, Transpose) {
   Matrix<double> m = {{1, 2}, {3, 4}};
   auto res = m.transpose();
@@ -52,5 +89,17 @@ TEST(MatrixTest, Multiply) {
   Matrix<double> identity = {{1, 0}, {0, 1}};
   Matrix<double> a = {{-1, 3.0 / 2}, {1, -1}};
   Matrix<double> b = {{2, 3}, {2, 2}};
-  EXPECT_EQ(a * b, identity);
+  EXPECT_EQ(a.matmul(b), identity);
+}
+TEST(MatrixTest, Reshape) {
+  Matrix<double> mat = {{1, 2}, {3, 4}, {5, 6}};
+  Matrix<double> expected = {{1, 2, 3}, {4, 5, 6}};
+  EXPECT_EQ(mat.reshape(2, 3), expected);
+}
+TEST(MatrixTest, Resize) {
+  Matrix<double> mat = {{1, 2}, {3, 4}, {5, 6}};
+  Matrix<double> expected = {{1, 2, 3}, {4, 5, 6}};
+  EXPECT_EQ(mat.resize(2, 3), expected);
+  // verifying that the matrix is mutated
+  EXPECT_EQ(mat, expected);
 }

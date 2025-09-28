@@ -17,16 +17,16 @@ public:
       throw std::runtime_error("Y must have dimension nx1");
     if (y_n_rows != x_n_rows)
       throw std::runtime_error("X andy  must have the same number of rows");
-    Matrix<double> XtX = X.transpose() * X;
+    Matrix<double> XtX = (X.transpose()).matmul(X);
     Matrix<double> inv_XtX = (XtX).inverse();
-    theta_ = inv_XtX * X.transpose() * y;
+    theta_ = inv_XtX.matmul(X.transpose()).matmul(y);
     return *this;
   }
   Matrix<double> predict(const Matrix<double> &X) {
     if (!theta_)
       throw std::runtime_error("Model not fitted yet!");
 
-    return X * theta_.value();
+    return X.matmul(theta_.value());
   }
   Matrix<double> get_coeffs() const {
 
