@@ -119,3 +119,7 @@ TEST(MatrixTest, WorksWithStdAlgorithms) {
   int sum = std::accumulate(mat.begin(), mat.end(), 0);
   EXPECT_EQ(sum, 1 + 2 + 3 + 4 + 5 + 6);
 }
+TEST(MatrixTest, Sum) {
+  Matrix<int> mat = {{1, 2}, {3, 4}, {5, 6}};
+  EXPECT_EQ(mat.sum(), 1 + 2 + 3 + 4 + 5 + 6);
+}
