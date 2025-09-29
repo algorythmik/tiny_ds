@@ -1,5 +1,6 @@
 #include "matrix.hpp"
 #include <gtest/gtest.h>
+#include <numeric>
 #include <vector>
 TEST(MatrixTest, DefaultConstructor) {
   Matrix<double> m(2, 3);
@@ -108,8 +109,13 @@ TEST(MatrixTest, Resize) {
 TEST(MatrixTest, RangeForIteratorAllElements) {
   Matrix<int> mat = {{1, 2}, {3, 4}, {5, 6}};
   std::vector<int> expected = {1, 2, 3, 4, 5, 6};
-  std::vector<int> res ={};
-  for (auto& el : mat)
-      res.push_back(el);
-  EXPECT_EQ(res,  expected);
+  std::vector<int> res = {};
+  for (auto &el : mat)
+    res.push_back(el);
+  EXPECT_EQ(res, expected);
+}
+TEST(MatrixTest, WorksWithStdAlgorithms) {
+  Matrix<int> mat = {{1, 2}, {3, 4}, {5, 6}};
+  int sum = std::accumulate(mat.begin(), mat.end(), 0);
+  EXPECT_EQ(sum, 1 + 2 + 3 + 4 + 5 + 6);
 }
