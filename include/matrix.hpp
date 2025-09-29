@@ -38,6 +38,11 @@ public:
   size_t rows() const { return rows_; }
   size_t cols() const { return cols_; }
 
+  T *begin() { return data_.data(); }
+  T *end() { return data_.data() + data_.size(); }
+  const T *begin() const { return data_.data(); }
+  const T *end() const { return data_.data() + data_.size(); }
+
   T &operator()(const size_t i, const size_t j) {
     if (i >= rows_ || j >= cols_)
       throw std::out_of_range("Matrix index out of range");

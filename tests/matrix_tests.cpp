@@ -1,5 +1,6 @@
 #include "matrix.hpp"
 #include <gtest/gtest.h>
+#include <vector>
 TEST(MatrixTest, DefaultConstructor) {
   Matrix<double> m(2, 3);
   EXPECT_EQ(m.rows(), 2);
@@ -102,4 +103,13 @@ TEST(MatrixTest, Resize) {
   EXPECT_EQ(mat.resize(2, 3), expected);
   // verifying that the matrix is mutated
   EXPECT_EQ(mat, expected);
+}
+
+TEST(MatrixTest, RangeForIteratorAllElements) {
+  Matrix<int> mat = {{1, 2}, {3, 4}, {5, 6}};
+  std::vector<int> expected = {1, 2, 3, 4, 5, 6};
+  std::vector<int> res ={};
+  for (auto& el : mat)
+      res.push_back(el);
+  EXPECT_EQ(res,  expected);
 }
