@@ -3,11 +3,29 @@
 #include <iostream>
 #include <numeric>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <vector>
 template <typename T, typename U>
 using matrix_value_t = typename std::common_type<T, U>::type;
 
+struct all_t {};
+constexpr all_t all{};
+
+template <typename T> class MatrixView {
+  T *data_;
+  size_t rows_, cols_, stride_;
+
+public:
+  MatrixView(T *data, size_t rows, size_t cols, size_t stride)
+      : data_{data}, rows_{rows}, cols_{cols}, stride_{stride} {}
+  size_t rows() const { return rows_; }
+  size_t cols() const { return cols_; }
+  T &operator()(size_t i, size_t j) { return data_[i * stride_ + j]; }
+  const T &operator()(size_t i, size_t j) const {
+    return data_[i * stride_ + j];
+  }
+};
 template <typename T = double> class Matrix {
   size_t rows_, cols_;
   std::vector<T> data_;
@@ -176,6 +194,18 @@ public:
     return I;
   }
   T sum() const { return std::accumulate(begin(), end(), T{}); }
+  auto view(all_t, size_t col) {
+    if (col > cols_)
+      throw std::runtime_error("Column index must be less than" +
+                               std::to_string(col));
+    return MatrixView<T>(data_.data() + col, rows_, 1, cols_);
+  }
+  auto view(size_t row, all_t) {
+    if (row > rows_)
+      throw std::runtime_error("Row index must be less than" +
+                               std::to_string(rows_));
+    return MatrixView<T>(data_.data() + row * cols_, 1, cols_, 1);
+  }
   void print() const {
 
     for (auto i = 0; i < rows_; ++i) {
@@ -202,3 +232,4 @@ Matrix<matrix_value_t<T, U>> matmul(const Matrix<T> &lhs,
   }
   return res;
 }
+

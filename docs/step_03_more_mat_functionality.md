@@ -30,14 +30,14 @@ Added resize method to mutate the matrix in-place to the new shape (also without
 Used C++ template metaprogramming (std::common_type) to allow operations between matrices of different numeric types (e.g., Matrix<int> + Matrix<double>).
 
 ### More Robust and Clear Matrix Inversion
-Changed the matrix inversion to always return Matrix<double>, ensuring numerical stability.
-Improved error handling and made sure only square matrices can be inverted.
-Code Quality and Usability Improvements
-Constructor accepting different matrix types: Now you can easily convert between, e.g., Matrix<int> and Matrix<double>.
-Better error messages for dimension mismatches and invalid operations.
-Test Coverage: Comprehensive unit tests for broadcasting, elementwise operations, matrix multiplication, reshape, and resize.
-Example Usage
-C++
+
+- Changed the matrix inversion to always return Matrix<double>, ensuring numerical stability.
+- Improved error handling and made sure only square matrices can be inverted.
+- Code Quality and Usability Improvements
+- Constructor accepting different matrix types: Now you can easily convert between, e.g., Matrix<int> and Matrix<double>.
+- Better error messages for dimension mismatches and invalid operations.
+
+```C++
 Matrix<double> a = {{1, 1}};
 Matrix<int> b = {{1, 0}, {0, 1}};
 auto result = a + b; // Broadcasting: result is {{2, 1}, {1, 2}}
@@ -47,5 +47,4 @@ Matrix<double> d = {{2, 0}, {1, 2}};
 auto matmul_result = c.matmul(d); // Standard matrix multiplication
 
 auto reshaped = c.reshape(1, 4); // Reshapes 2x2 to 1x4
-Summary
-This step established a solid foundation for numerical computations in C++, mirroring features from popular data science libraries. By learning and implementing broadcasting, advanced operator overloading, and robust matrix operations, you are now equipped to build more powerful mathematical models and algorithms in C++.
+```
