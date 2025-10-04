@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <numeric>
+#include <ranges>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -11,13 +12,17 @@ using matrix_value_t = typename std::common_type<T, U>::type;
 
 struct all_t {};
 constexpr all_t all{};
-
+struct range {
+  size_t start;
+  size_t end;
+};
 template <typename T> class MatrixView {
   T *data_;
   size_t rows_, cols_, stride_;
 
 public:
-  MatrixView(T *data, size_t rows, size_t cols, size_t stride)
+  MatrixView(T *data, size_t rows, size_t cols, size_t stride,
+             size_t offset = 0)
       : data_{data}, rows_{rows}, cols_{cols}, stride_{stride} {}
   size_t rows() const { return rows_; }
   size_t cols() const { return cols_; }
@@ -25,7 +30,13 @@ public:
   const T &operator()(size_t i, size_t j) const {
     return data_[i * stride_ + j];
   }
+  void print() {
+    for (size_t i : std::views::iota(size_t(0), rows_))
+      for (size_t j : std::views::iota(size_t(0), cols_))
+        std::cout << (*this)(i, j) << ", ";
+  }
 };
+
 template <typename T = double> class Matrix {
   size_t rows_, cols_;
   std::vector<T> data_;
@@ -206,6 +217,16 @@ public:
                                std::to_string(rows_));
     return MatrixView<T>(data_.data() + row * cols_, 1, cols_, 1);
   }
+
+  auto view(range row_range, range col_range) {
+    if ((row_range.start > rows_) || (row_range.end > rows_) ||
+        (col_range.end > cols_) || (col_range.start > cols_))
+      throw std::runtime_error("Ranges are must be less than boundaries");
+    size_t offset = row_range.start * cols_ + col_range.start;
+    size_t view_cols_ = col_range.end - col_range.start;
+    size_t view_rows_ = row_range.end - row_range.start;
+    return MatrixView<T>(data_.data() + offset, view_rows_, view_cols_, cols_);
+  }
   void print() const {
 
     for (auto i = 0; i < rows_; ++i) {
@@ -232,4 +253,3 @@ Matrix<matrix_value_t<T, U>> matmul(const Matrix<T> &lhs,
   }
   return res;
 }
-

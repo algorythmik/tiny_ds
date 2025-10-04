@@ -130,3 +130,19 @@ TEST(MatrixTest, ColumnView) {
   EXPECT_EQ(col(0, 0), 2);
   EXPECT_EQ(col(1, 0), 4);
 }
+TEST(MatrixTest, RowView) {
+  Matrix<int> mat = {{1, 2}, {3, 4}, {5, 6}};
+  auto col = mat.view(1, all);
+
+  EXPECT_EQ(col(0, 0), 3);
+  EXPECT_EQ(col(1, 0), 4);
+}
+
+TEST(MatrixTest, MatrixView) {
+  Matrix<int> mat = {
+      {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+  auto res = mat.view(range(1, 3), range(1, 2));
+  EXPECT_EQ(res(0, 0), 6);
+  EXPECT_EQ(res(1, 0), 10);
+  EXPECT_EQ(res(2, 1), 15);
+}
