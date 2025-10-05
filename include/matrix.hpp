@@ -1,7 +1,10 @@
 #pragma once
+#include <cstddef>
 #include <initializer_list>
 #include <iostream>
+#include <iterator>
 #include <numeric>
+#include <ostream>
 #include <ranges>
 #include <stdexcept>
 #include <string>
@@ -16,6 +19,40 @@ struct range {
   size_t start;
   size_t end;
 };
+template <typename T> class ViewIterator {
+  T *ptr_;
+  size_t stride_, i_, j_, cols_;
+
+public:
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = T;
+  using difference_type = std::ptrdiff_t;
+  using pointer = T *;
+  using reference = T &;
+  ViewIterator(T *data, size_t stride, size_t cols, size_t i, size_t j)
+      : ptr_(data), stride_(stride), cols_(cols), i_(i), j_(j) {
+  };
+  reference operator*() { return ptr_[i_ * stride_ + j_]; }
+  pointer operator->() { return &(**this); }
+  ViewIterator &operator++() {
+    ++j_;
+    if (j_ >= cols_) {
+      j_ = 0;
+      i_++;
+    }
+
+    return (*this);
+  }
+  ViewIterator operator++(int) {
+    ViewIterator tmp = (*this);
+    ++(*this);
+    return tmp;
+  }
+  bool operator==(const ViewIterator &other) const {
+    return i_ == other.i_ && j_ == other.j_;
+  }
+};
+
 template <typename T> class MatrixView {
   T *data_;
   size_t rows_, cols_, stride_;
@@ -34,6 +71,12 @@ public:
     for (size_t i : std::views::iota(size_t(0), rows_))
       for (size_t j : std::views::iota(size_t(0), cols_))
         std::cout << (*this)(i, j) << ", ";
+  }
+  ViewIterator<T> begin() {
+    return ViewIterator<T>(data_, stride_, cols_, 0, 0);
+  }
+  ViewIterator<T> end() {
+    return ViewIterator<T>(data_, stride_, cols_, rows_, 0);
   }
 };
 
@@ -219,12 +262,12 @@ public:
   }
 
   auto view(range row_range, range col_range) {
-    if ((row_range.start > rows_) || (row_range.end > rows_) ||
-        (col_range.end > cols_) || (col_range.start > cols_))
+    if ((row_range.start > rows_) || (row_range.end >= rows_) ||
+        (col_range.end > cols_) || (col_range.start >= cols_))
       throw std::runtime_error("Ranges are must be less than boundaries");
     size_t offset = row_range.start * cols_ + col_range.start;
-    size_t view_cols_ = col_range.end - col_range.start;
-    size_t view_rows_ = row_range.end - row_range.start;
+    size_t view_cols_ = col_range.end - col_range.start + 1;
+    size_t view_rows_ = row_range.end - row_range.start + 1;
     return MatrixView<T>(data_.data() + offset, view_rows_, view_cols_, cols_);
   }
   void print() const {

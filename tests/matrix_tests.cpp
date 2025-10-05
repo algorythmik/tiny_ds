@@ -146,3 +146,15 @@ TEST(MatrixTest, MatrixView) {
   EXPECT_EQ(res(1, 0), 10);
   EXPECT_EQ(res(2, 1), 15);
 }
+
+TEST(MatrixTest, ViewIterator) {
+  Matrix<int> mat = {
+      {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+  auto view = mat.view(range(1, 3), range(1, 2));
+  for (auto el: view)
+    std::cout << el << ", ";
+  std::cout << std::endl;
+  auto res = std::accumulate(view.begin(), view.end(), 0);
+  std::cout << res << std::endl;
+  EXPECT_EQ(res, 6 + 7 + 10 + 11 + 14 + 15);
+}
